@@ -48,5 +48,18 @@ def past_week():
     today = datetime.date.today()
     one_day = datetime.timedelta(days=1)
 
+    dates = []
     for i in xrange(0, 8):  # TODO: find better interval
-        yield today - (one_day * i)
+        cdate =  today - (one_day * i)
+        dates.append((str(cdate), '{d:%A}, {d:%d}'.format(d=cdate)))
+    return dates
+
+
+def eraseElement(d,k):
+    if isinstance(d, dict):
+        if k in d:
+            d.pop(k)
+        else:
+            print("Cannot find matching key")
+    else:
+        print("Not able to delete")

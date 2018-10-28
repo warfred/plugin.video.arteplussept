@@ -25,6 +25,13 @@ def create_magazines_item():
     }
 
 
+def create_weekly_item():
+    return {
+	'label':'Weekly Program',
+	'path': plugin.url_for('weekly')
+    }
+
+
 def map_category_item(item, category_code):
     code = item.get('code')
     title = item.get('title')
@@ -41,6 +48,10 @@ def map_category_item(item, category_code):
     }
 
 
+def map_weekly_item(data):
+    return map_video(data.get('video'))
+
+
 def map_generic_item(config):
     programId = config.get('programId')
 
@@ -54,6 +65,7 @@ def map_generic_item(config):
 def map_video(config):
     programId = config.get('programId')
     kind = config.get('kind')
+
     duration = int(config.get('duration') or 0) * \
         60 or config.get('durationSeconds')
     airdate = config.get('broadcastBegin')
@@ -81,7 +93,10 @@ def map_video(config):
         },
         'properties': {
             'fanart_image': config.get('imageUrl'),
-        }
+        },
+	'rucksack': {
+	    'programId': programId,
+	}
     }
 
 

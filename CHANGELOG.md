@@ -1,3 +1,9 @@
+* Now gets all videos for last 7 day ( again - can take a while )
+  w/o preview clip ( short preview clips removed - may configured by settings later )
+  w/o duplicate entries ( 7 day list may contain duplicate entries - cleaned up so only one element is shown )
+
+* Internal: Added some attributes for internal and later use
+
 # Version 1.0.1
 
 Major encoding fix & html entities decode

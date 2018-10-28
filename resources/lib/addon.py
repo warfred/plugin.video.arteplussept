@@ -37,13 +37,12 @@ languages = ['fr', 'de', 'en', 'es', 'pl']
 qualities = ['SQ', 'EQ', 'HQ']
 
 # defaults to fr
-language = plugin.get_setting('lang', int, languages) or languages[0]
+language = languages[plugin.get_setting('lang', int)] or languages[0]
 # defaults to SQ
-quality = plugin.get_setting('quality', int, qualities) or qualities[0]
+quality = qualities[plugin.get_setting('quality', int)] or qualities[0]
 
 # my imports
 import view
-
 
 @plugin.route('/', name='index')
 def index():
@@ -58,6 +57,12 @@ def category(category_code):
 @plugin.route('/creative', name='creative')
 def creative():
     return []
+
+
+@plugin.route('/weekly', name='weekly')
+def weekly():
+    plugin.set_content('tvshows')
+    return plugin.finish(view.build_weekly(language))
 
 
 @plugin.route('/magazines', name='magazines')

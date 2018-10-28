@@ -1,5 +1,7 @@
 from collections import OrderedDict
 import requests
+import hof
+import utils
 
 from addon import PluginInformation
 
@@ -14,8 +16,6 @@ _endpoints = {
     'magazines': '/OPA/v3/magazines/{lang}',
     'collection': '/OPA/v3/videos/collection/{kind}/{collection_id}/{lang}',
     'streams': '/OPA/v3/streams/{program_id}/{kind}/{lang}',
-
-
     'daily': '/OPA/v3/programs/{date}/{lang}'
 }
 
@@ -28,6 +28,15 @@ def categories(lang):
 def magazines(lang):
     url = _endpoints['magazines'].format(lang=lang)
     return _load_json(url).get('magazines', {})
+
+
+def get_weekly_list(lang):
+    return hof.flatten([dayly(date,lang) for (date, _) in utils.past_week()])
+
+
+def dayly(date, lang):
+    url = _endpoints['daily'].format(date=date, lang=lang)
+    return _load_json(url).get('programs', { } ) 
 
 
 def category(category_code, lang):
@@ -53,12 +62,6 @@ def streams(kind, program_id, lang):
     return _load_json(url).get('videoStreams', [])
 
 
-def daily(date, lang):
-    url = _endpoints['daily'].format(date=date, lang=lang)
-    print "fetching " + url
-    return _load_json(url).get('programs', [])
-
-
 def _load_json(url, params=None, headers=_base_headers):
     r = requests.get(_base_api_url + url, params=params, headers=headers)
-    return r.json(object_pairs_hook=OrderedDict)
+    return r.json(object_pairs_hook=OrderedDict) 
