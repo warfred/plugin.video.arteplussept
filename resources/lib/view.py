@@ -4,7 +4,7 @@ import mapper
 import hof
 import utils
 
-_weekly_useless = { 'CLIP', 'MANUAL_CLIP' }
+_weekly_useless = { 'CLIP', 'MANUAL_CLIP', 'TRAILER' }
 
 def build_categories(lang):
     categories = [mapper.map_categories_item(
