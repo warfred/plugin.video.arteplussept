@@ -2,6 +2,8 @@ from collections import OrderedDict
 import requests
 import hof
 import utils
+import cache
+import xbmc
 
 from addon import PluginInformation
 
@@ -18,6 +20,11 @@ _endpoints = {
     'streams': '/OPA/v3/streams/{program_id}/{kind}/{lang}',
     'daily': '/OPA/v3/programs/{date}/{lang}'
 }
+
+_cache_db_path=xbmc.translatePath(PluginInformation.profile)
+_cache_db_store='.storage/'
+_cache_db_name='ARTE_CACHE.db'
+_cache_db_table='arte_cache'
 
 
 def categories(lang):
@@ -43,8 +50,32 @@ def get_weekly_list(lang):
 
 
 def dayly(date, lang):
-    url = _endpoints['daily'].format(date=date, lang=lang)
-    return _load_json(url).get('programs', { } ) 
+    if PluginInformation._use_cache:
+        _cache_db=cache.open_cache_db(_cache_db_path + _cache_db_store + _cache_db_name)
+        _cache_conn=cache.open_cache_db_conn(_cache_db)
+        if cache.check_cache_table( _cache_conn, _cache_db_table ):
+            xbmc.log('create database table ' + _cache_db_table, 2)                         
+            if cache.create_cache_db( _cache_db, _cache_conn, 'CREATE table '+_cache_db_table+' ( date, dict )' ):
+                xmbc.log ('table ' + _cache_db_table + ' in database ' + _cache_db_name + ' could not created', 2)  
+            else:                                           
+                xbmc.log ('table ' + _cache_db_table + ' in database ' + _cache_db_name + ' successfully created', 2)
+ 
+        url_ret = cache.get_cache_db(_cache_db, _cache_conn, _cache_db_table, date )
+        if url_ret is None:                                 
+            url_ret = _load_json(_endpoints['daily'].format(date=date, lang=lang)).get('programs', { } )
+            if date != utils.past_week()[0][0]:
+                cache.store_cache_db(_cache_db, _cache_conn, _cache_db_table, date, url_ret )
+                xbmc.log('data cached for date ' + date, 2)
+            else:
+                xbmc.log('data is today (' + date + ') not written in cache', 2 )
+        else:                                       
+            xbmc.log('data successfully read from cache for date : ' + date, 2 )
+
+        return url_ret
+                                   
+    else:                                                             
+        url = _endpoints['daily'].format(date=date, lang=lang)
+        return _load_json(url).get('programs', { } )
 
 
 def category(category_code, lang):
