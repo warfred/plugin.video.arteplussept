@@ -17,10 +17,7 @@ def build_categories(lang):
 
 
 def build_magazines(lang):
-    return_map = [ mapper.map_generic_item(item) for item in api.magazines(lang) ]
-    # cleanup rucksack attributes from list for kodi types
-    [ utils.eraseElement(item,'rucksack') for item in return_map ]
-    return return_map
+    return [ mapper.map_generic_item(item) for item in api.magazines(lang) ]
 
 
 def build_weekly(lang):
@@ -43,10 +40,7 @@ def build_category(category_code, lang):
 
 
 def build_sub_category_by_code(sub_category_code, lang):
-    return_map = [mapper.map_generic_item(item) for item in api.subcategory(sub_category_code, lang)]
-    # cleanup rucksack attributes from list for kodi types
-    [ utils.eraseElement(item,'rucksack') for item in return_map ]
-    return return_map
+    return [mapper.map_generic_item(item) for item in api.subcategory(sub_category_code, lang)]
 
 
 def build_sub_category_by_title(category_code, sub_category_title, lang):
@@ -54,17 +48,11 @@ def build_sub_category_by_title(category_code, sub_category_title, lang):
     sub_category = hof.find(lambda i: utils.sanitize_string(
         i.get('title')) == sub_category_title, category)
 
-    return_map = [mapper.map_generic_item(item) for item in sub_category.get('teasers')]
-    # cleanup rucksack attributes from list for kodi types
-    [ utils.eraseElement(item,'rucksack') for item in return_map ]
-    return return_map
+    return [mapper.map_generic_item(item) for item in sub_category.get('teasers')]
 
 
 def build_mixed_collection(kind, collection_id, lang):
-    return_map = [mapper.map_generic_item(item) for item in api.collection(kind, collection_id, lang)]
-    # cleanup rucksack attributes from list for kodi types
-    [ utils.eraseElement(item,'rucksack') for item in return_map ]
-    return return_map
+    return [mapper.map_generic_item(item) for item in api.collection(kind, collection_id, lang)]
 
 
 def build_stream_url(kind, program_id, lang, quality):

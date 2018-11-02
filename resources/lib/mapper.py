@@ -49,7 +49,9 @@ def map_category_item(item, category_code):
 
 
 def map_weekly_item(data):
-    return map_video(data.get('video'))
+    data = data.get('video')
+    programId = data.get('programId')
+    return hof.merge_dicts( map_video(data), {'rucksack': {'programId': programId}} )
 
 
 def map_generic_item(config):
@@ -93,10 +95,7 @@ def map_video(config):
         },
         'properties': {
             'fanart_image': config.get('imageUrl'),
-        },
-	'rucksack': {
-	    'programId': programId,
-	}
+        }
     }
 
 
