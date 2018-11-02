@@ -2,7 +2,7 @@ from addon import plugin
 
 import hof
 import utils
-
+import xbmc
 
 def map_categories_item(item):
     return {
@@ -29,6 +29,27 @@ def create_weekly_item():
     return {
 	'label':'Weekly Program',
 	'path': plugin.url_for('weekly')
+    }
+
+
+def create_newest_item():
+    return {
+        'label': 'Most recent',
+        'path': plugin.url_for('newest')
+    }
+
+
+def create_most_viewed_item():
+    return {
+        'label': 'Most viewed',
+        'path': plugin.url_for('most_viewed')
+    }
+
+
+def create_last_chance_item():
+    return {
+        'label': 'Last Chance',
+        'path': plugin.url_for('last_chance')
     }
 
 
@@ -74,11 +95,21 @@ def map_video(config):
     if airdate is not None:
         airdate = str(utils.parse_date(airdate))
 
+    # Some content is not playable
+    # json msg : You don't have the sufficient rights to access this kind
+
+    path = plugin.url_for('play', kind=kind, program_id=programId)
+    if path is not None:
+        is_playable = True
+    else:
+        xbmc.log('Content for ' + str(kind) + ':' + str(programId) + ' filtered due insufficient rights', 2)
+        is_playable = False
+
     return {
         'label': utils.format_title_and_subtitle(config.get('title'), config.get('subtitle')),
-        'path': plugin.url_for('play', kind=kind, program_id=programId),
+        'path': path,
         'thumbnail': config.get('imageUrl'),
-        'is_playable': True,
+        'is_playable': is_playable,
         'info_type': 'video',
         'info': {
             'title': config.get('title'),
