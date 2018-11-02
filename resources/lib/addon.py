@@ -32,7 +32,7 @@ class PluginInformation:
     version = plugin.addon.getAddonInfo('version')
     profile = plugin.addon.getAddonInfo('profile')
     addonpath = plugin.addon.getAddonInfo('path')
-    _use_cache = True
+    _use_cache = plugin.get_setting('cache', bool) or False
     _cache_db_path=xbmc.translatePath(profile)
     _cache_db_store='.storage/'
     _cache_db_name='ARTE_CACHE.db'
@@ -48,8 +48,6 @@ qualities = ['SQ', 'EQ', 'HQ']
 language = languages[plugin.get_setting('lang', int)] or languages[0]
 # defaults to SQ
 quality = qualities[plugin.get_setting('quality', int)] or qualities[0]
-# use cache
-_use_cache = plugin.get_setting('cache', bool) or False
 
 # my imports
 import view
