@@ -48,6 +48,8 @@ qualities = ['SQ', 'EQ', 'HQ']
 language = languages[plugin.get_setting('lang', int)] or languages[0]
 # defaults to SQ
 quality = qualities[plugin.get_setting('quality', int)] or qualities[0]
+# set download folder
+download_folder = plugin.get_setting('download_folder') or None
 
 # my imports
 import view
@@ -130,6 +132,16 @@ def cleandb():
         plugin.notify(ret[1], 'ERROR' )
 
     return plugin.finish()
+
+
+@plugin.route('/download/<kind>/<program_id>/<title>', name='download')
+def download_file(kind, program_id, title):
+    if download_folder:
+        plugin.notify(title, 'Downloading')
+        ostools.download_http( title + '_' + program_id + os.extsep + 'mp4', view.build_stream_url(kind, program_id, short_language, quality)['path'] ) 
+        plugin.notify(title, 'Download completed')
+    else:                                                    
+        plugin.notify('Please set a download folder in the settings', 'ERROR')
 
 
 """
