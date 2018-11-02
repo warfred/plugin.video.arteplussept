@@ -21,10 +21,10 @@ _endpoints = {
     'daily': '/OPA/v3/programs/{date}/{lang}'
 }
 
-_cache_db_path=xbmc.translatePath(PluginInformation.profile)
-_cache_db_store='.storage/'
-_cache_db_name='ARTE_CACHE.db'
-_cache_db_table='arte_cache'
+_cache_db_path=PluginInformation._cache_db_path
+_cache_db_store=PluginInformation._cache_db_store
+_cache_db_name=PluginInformation._cache_db_name
+_cache_db_table=PluginInformation._cache_db_table
 
 
 def categories(lang):

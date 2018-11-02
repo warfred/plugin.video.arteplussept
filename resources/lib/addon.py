@@ -20,7 +20,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #
 from xbmcswift2 import Plugin
-
+import xbmc
 
 # global declarations
 # plugin stuff
@@ -33,7 +33,12 @@ class PluginInformation:
     profile = plugin.addon.getAddonInfo('profile')
     addonpath = plugin.addon.getAddonInfo('path')
     _use_cache = True
-
+    _cache_db_path=xbmc.translatePath(profile)
+    _cache_db_store='.storage/'
+    _cache_db_name='ARTE_CACHE.db'
+    _cache_db_long=_cache_db_path + _cache_db_store + _cache_db_name
+    _cache_db_table='arte_cache'
+    
 
 # settings stuff
 languages = ['fr', 'de', 'en', 'es', 'pl']
@@ -48,6 +53,7 @@ _use_cache = plugin.get_setting('cache', bool) or False
 
 # my imports
 import view
+import ostools
 
 @plugin.route('/', name='index')
 def index():
@@ -115,6 +121,17 @@ def collection(kind, collection_id):
 @plugin.route('/play/<kind>/<program_id>', name='play')
 def play(kind, program_id):
     return plugin.set_resolved_url(view.build_stream_url(kind, program_id, language, quality))
+
+
+@plugin.route('/cleandb', name='cleandb')
+def cleandb():
+    ret=ostools.delete(PluginInformation._cache_db_long)
+    if ret[0]:
+        plugin.notify('Cache-Database deleted', 'Success')
+    else:
+        plugin.notify(ret[1], 'ERROR' )
+
+    return plugin.finish()
 
 
 """
