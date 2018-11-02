@@ -32,6 +32,27 @@ def create_weekly_item():
     }
 
 
+def create_newest_item():
+    return {
+        'label': 'Most recent',
+        'path': plugin.url_for('newest')
+    }
+
+
+def create_most_viewed_item():
+    return {
+        'label': 'Most viewed',
+        'path': plugin.url_for('most_viewed')
+    }
+
+
+def create_last_chance_item():
+    return {
+        'label': 'Last Chance',
+        'path': plugin.url_for('last_chance')
+    }
+
+
 def map_category_item(item, category_code):
     code = item.get('code')
     title = item.get('title')
