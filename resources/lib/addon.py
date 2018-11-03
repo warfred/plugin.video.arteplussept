@@ -21,6 +21,7 @@
 #
 from xbmcswift2 import Plugin
 import xbmc
+import os
 
 # global declarations
 # plugin stuff
@@ -33,6 +34,7 @@ class PluginInformation:
     profile = plugin.addon.getAddonInfo('profile')
     addonpath = plugin.addon.getAddonInfo('path')
     _use_cache = plugin.get_setting('cache', bool) or False
+    _download  = plugin.get_setting('download', bool) or False
     _cache_db_path=xbmc.translatePath(profile)
     _cache_db_store='.storage/'
     _cache_db_name='ARTE_CACHE.db'
@@ -138,10 +140,14 @@ def cleandb():
 def download_file(kind, program_id, title):
     if download_folder:
         plugin.notify(title, 'Downloading')
-        ostools.download_http( title + '_' + program_id + os.extsep + 'mp4', view.build_stream_url(kind, program_id, short_language, quality)['path'] ) 
-        plugin.notify(title, 'Download completed')
+        ret=ostools.download_http( download_folder + title + '_' + program_id + os.extsep + 'mp4', view.build_stream_url(kind, program_id, language, quality)['path'] )
+        if ret[0]:
+            plugin.notify('Download completed', title)
+        else:
+            xbmc.sleep(10000)
+            plugin.notify('Download error', ret[1] )
     else:                                                    
-        plugin.notify('Please set a download folder in the settings', 'ERROR')
+        plugin.notify('Please set a download folder in the settings', 'Configuration ERROR')
 
 
 """

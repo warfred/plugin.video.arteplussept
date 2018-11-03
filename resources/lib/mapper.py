@@ -1,4 +1,6 @@
 from addon import plugin
+from xbmcswift2 import actions
+from HTMLParser import HTMLParser
 
 import hof
 import utils
@@ -105,6 +107,15 @@ def map_video(config):
         xbmc.log('Content for ' + str(kind) + ':' + str(programId) + ' filtered due insufficient rights', 2)
         is_playable = False
 
+    # Prepare filename for download
+
+    label = config.get('title')
+    subtitle = config.get('subtitle')
+    if subtitle:
+       label += ' - ' + subtitle
+
+    label = u'{label}'.format(label=HTMLParser().unescape(label))
+
     return {
         'label': utils.format_title_and_subtitle(config.get('title'), config.get('subtitle')),
         'path': path,
@@ -126,7 +137,10 @@ def map_video(config):
         },
         'properties': {
             'fanart_image': config.get('imageUrl'),
-        }
+        },
+	'context_menu': [
+            ('Download video', actions.background(plugin.url_for('download', kind=kind, program_id=programId, title=label.encode('UTF-8'))))
+        ]
     }
 
 
