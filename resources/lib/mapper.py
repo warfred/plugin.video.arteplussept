@@ -1,4 +1,5 @@
 from addon import plugin
+from addon import PluginInformation
 from xbmcswift2 import actions
 from HTMLParser import HTMLParser
 
@@ -107,16 +108,7 @@ def map_video(config):
         xbmc.log('Content for ' + str(kind) + ':' + str(programId) + ' filtered due insufficient rights', 2)
         is_playable = False
 
-    # Prepare filename for download
-
-    label = config.get('title')
-    subtitle = config.get('subtitle')
-    if subtitle:
-       label += ' - ' + subtitle
-
-    label = u'{label}'.format(label=HTMLParser().unescape(label))
-
-    return {
+    ret_map = {
         'label': utils.format_title_and_subtitle(config.get('title'), config.get('subtitle')),
         'path': path,
         'thumbnail': config.get('imageUrl'),
@@ -137,12 +129,27 @@ def map_video(config):
         },
         'properties': {
             'fanart_image': config.get('imageUrl'),
-        },
-	'context_menu': [
-            ('Download video', actions.background(plugin.url_for('download', kind=kind, program_id=programId, title=label.encode('UTF-8'))))
-        ]
+        }
     }
 
+    # Prepare filename for download
+
+    label = config.get('title')
+    subtitle = config.get('subtitle')
+    if subtitle:
+       label += ' - ' + subtitle
+
+    label = u'{label}'.format(label=HTMLParser().unescape(label))
+
+    down_map = { 'context_menu': [ ('Download video', actions.background(plugin.url_for('download', kind=kind, program_id=programId, title=label.encode('UTF-8')))) ] }
+
+    # Extend ret_map with download option if selected
+
+    if PluginInformation._download:
+        return hof.merge_dicts( ret_map, down_map )
+    else:
+        return ret_map
+ 
 
 def map_playlist(config):
     programId = config.get('programId')
